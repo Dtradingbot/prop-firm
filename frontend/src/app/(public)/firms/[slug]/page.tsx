@@ -12,8 +12,9 @@ async function getFirm(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const firm = await getFirm(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const firm = await getFirm(slug);
   if (!firm) return { title: 'Firm Not Found' };
   return {
     title: firm.metaTitle || `${firm.name} Review & Discount Codes`,
@@ -22,8 +23,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function FirmPage({ params }: { params: { slug: string } }) {
-  const firm = await getFirm(params.slug);
+export default async function FirmPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const firm = await getFirm(slug);
   if (!firm) notFound();
   return <FirmDetailClient firm={firm} />;
 }
