@@ -1,0 +1,359 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  USER
+  EDITOR
+  SUPER_ADMIN
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EvaluationType {
+  ONE_STEP
+  TWO_STEP
+  THREE_STEP
+  INSTANT
+}
+
+enum ClickSource {
+  DIRECTORY
+  FIRM_PAGE
+  OFFER
+  COMPARE
+  BLOG
+  OTHER
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique @db.VarChar(255)
+  username     String   @unique @db.VarChar(100)
+  passwordHash String   @db.VarChar(255)
+  role         Role     @default(USER)
+  avatar       String?  @db.VarChar(500)
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  reviews   Review[]
+  blogPosts BlogPost[]
+
+  @@map("users")
+}
+
+// ─── BROKER ───────────────────────────────────────────────────────────────────
+
+model Broker {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(200)
+  slug        String   @unique @db.VarChar(200)
+  logo        String?  @db.VarChar(500)
+  website     String?  @db.VarChar(500)
+  regulation  String?  @db.VarChar(255)
+  rating      Float    @default(0)
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  firms PropFirm[]
+
+  @@map("brokers")
+}
+
+// ─── PROP FIRM ────────────────────────────────────────────────────────────────
+
+model PropFirm {
+  id               String         @id @default(cuid())
+  name             String         @db.VarChar(200)
+  slug             String         @unique @db.VarChar(200)
+  logo             String?        @db.VarChar(500)
+  description      String?        @db.LongText
+  shortDescription String?        @db.VarChar(500)
+
+  websiteUrl       String?        @db.VarChar(500)
+  affiliateUrl     String?        @db.VarChar(500)
+
+  // Company details
+  country          String?        @db.VarChar(100)
+  founded          Int?
+  headquarters     String?        @db.VarChar(255)
+
+  // Trading config — platforms stored as JSON array e.g. ["MT4","MT5"]
+  platforms        Json?
+  evaluationType   EvaluationType @default(TWO_STEP)
+  instantFunding   Boolean        @default(false)
+
+  // Financial details
+  minFundingSize   Float?
+  maxFundingSize   Float?
+  profitSplit      Float?
+  maxAllocation    Float?
+  tradingFee       Float?
+  payoutFrequency  String?        @db.VarChar(100)
+
+  // Drawdown rules
+  maxDailyDrawdown Float?
+  maxTotalDrawdown Float?
+  drawdownType     String?        @db.VarChar(50)
+
+  // Rules stored as JSON object
+  rules            Json?
+
+  // Broker relation
+  brokerId         String?
+  broker           Broker?        @relation(fields: [brokerId], references: [id])
+
+  // Trust / rating
+  ratingOverride   Float?
+  trustScore       Float          @default(0)
+  averageRating    Float          @default(0)
+  reviewCount      Int            @default(0)
+
+  // Trending counters
+  viewCount        Int            @default(0)
+  clickCount       Int            @default(0)
+  engagementScore  Float          @default(0)
+
+  // SEO
+  metaTitle        String?        @db.VarChar(255)
+  metaDescription  String?        @db.VarChar(500)
+  keywords         String?        @db.VarChar(500)
+  canonicalUrl     String?        @db.VarChar(500)
+  ogImage          String?        @db.VarChar(500)
+  schemaMarkup     Json?
+
+  isFeatured       Boolean        @default(false)
+  isActive         Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  reviews         Review[]
+  offers          Offer[]
+  clicks          Click[]
+  faqs            FAQ[]
+  fundingPrograms FundingProgram[]
+
+  @@map("prop_firms")
+}
+
+model FundingProgram {
+  id           String   @id @default(cuid())
+  firmId       String
+  firm         PropFirm @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  name         String   @db.VarChar(200)
+  accountSizes Json     // e.g. [10000, 25000, 50000, 100000, 200000]
+  profitSplit  Float
+  fee          Float?
+  description  String?  @db.Text
+  createdAt    DateTime @default(now())
+
+  @@map("funding_programs")
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  firmId    String
+  firm      PropFirm @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  question  String   @db.Text
+  answer    String   @db.LongText
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("faqs")
+}
+
+// ─── OFFERS ───────────────────────────────────────────────────────────────────
+
+model Offer {
+  id           String    @id @default(cuid())
+  title        String    @db.VarChar(255)
+  description  String?   @db.Text
+  discount     Float?
+  couponCode   String?   @db.VarChar(100)
+  affiliateUrl String    @db.VarChar(500)
+  expiresAt    DateTime?
+  isActive     Boolean   @default(true)
+  firmId       String
+  firm         PropFirm  @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("offers")
+}
+
+// ─── REVIEWS ─────────────────────────────────────────────────────────────────
+
+model Review {
+  id           String       @id @default(cuid())
+  firmId       String
+  firm         PropFirm     @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User         @relation(fields: [userId], references: [id])
+  rating       Int
+  title        String?      @db.VarChar(255)
+  body         String       @db.LongText
+  proofImage   String?      @db.VarChar(500)
+  status       ReviewStatus @default(PENDING)
+  isVerified   Boolean      @default(false)
+  helpfulVotes Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@unique([firmId, userId])
+  @@map("reviews")
+}
+
+// ─── BLOG ─────────────────────────────────────────────────────────────────────
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @db.VarChar(100)
+  slug      String     @unique @db.VarChar(100)
+  createdAt DateTime   @default(now())
+
+  posts BlogPost[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @db.VarChar(100)
+  slug String @unique @db.VarChar(100)
+
+  posts BlogPost[]
+
+  @@map("tags")
+}
+
+model BlogPost {
+  id              String    @id @default(cuid())
+  title           String    @db.VarChar(500)
+  slug            String    @unique @db.VarChar(500)
+  excerpt         String?   @db.Text
+  body            String    @db.LongText
+  featuredImage   String?   @db.VarChar(500)
+  authorId        String
+  author          User      @relation(fields: [authorId], references: [id])
+  categoryId      String?
+  category        Category? @relation(fields: [categoryId], references: [id])
+  tags            Tag[]
+  isPublished     Boolean   @default(false)
+  publishedAt     DateTime?
+  metaTitle       String?   @db.VarChar(255)
+  metaDescription String?   @db.VarChar(500)
+  viewCount       Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("blog_posts")
+}
+
+// ─── ANALYTICS ───────────────────────────────────────────────────────────────
+
+model Click {
+  id        String      @id @default(cuid())
+  firmId    String
+  firm      PropFirm    @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  source    ClickSource @default(OTHER)
+  ipAddress String?     @db.VarChar(50)
+  userAgent String?     @db.VarChar(500)
+  referer   String?     @db.VarChar(500)
+  country   String?     @db.VarChar(100)
+  device    String?     @db.VarChar(50)
+  sessionId String?     @db.VarChar(100)
+  createdAt DateTime    @default(now())
+
+  @@map("clicks")
+}
+
+model Analytics {
+  id        String   @id @default(cuid())
+  pageSlug  String   @db.VarChar(500)
+  pageType  String   @db.VarChar(100)
+  ipAddress String?  @db.VarChar(50)
+  userAgent String?  @db.VarChar(500)
+  referer   String?  @db.VarChar(500)
+  country   String?  @db.VarChar(100)
+  device    String?  @db.VarChar(50)
+  sessionId String?  @db.VarChar(100)
+  createdAt DateTime @default(now())
+
+  @@map("analytics")
+}
+
+// ─── CMS ─────────────────────────────────────────────────────────────────────
+
+model Page {
+  id              String   @id @default(cuid())
+  title           String   @db.VarChar(255)
+  slug            String   @unique @db.VarChar(255)
+  body            String   @db.LongText
+  metaTitle       String?  @db.VarChar(255)
+  metaDescription String?  @db.VarChar(500)
+  keywords        String?  @db.VarChar(500)
+  canonicalUrl    String?  @db.VarChar(500)
+  ogImage         String?  @db.VarChar(500)
+  isPublished     Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("pages")
+}
+
+model MenuItem {
+  id       String    @id @default(cuid())
+  menuId   String
+  menu     Menu      @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  label    String    @db.VarChar(100)
+  url      String    @db.VarChar(500)
+  order    Int       @default(0)
+  parentId String?
+  parent   MenuItem? @relation("MenuItemChildren", fields: [parentId], references: [id])
+  children MenuItem[] @relation("MenuItemChildren")
+
+  @@map("menu_items")
+}
+
+model Menu {
+  id        String     @id @default(cuid())
+  name      String     @unique @db.VarChar(50)
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("menus")
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique @db.VarChar(100)
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model Newsletter {
+  id        String   @id @default(cuid())
+  email     String   @unique @db.VarChar(255)
+  createdAt DateTime @default(now())
+
+  @@map("newsletters")
+}

@@ -1,0 +1,9 @@
+# Place this file in /api.yourdomain.com/ and rename to .htaccess
+# It proxies all requests to the Express server running on port 3001
+
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^(.*)$ http://localhost:3001/$1 [P,L]
