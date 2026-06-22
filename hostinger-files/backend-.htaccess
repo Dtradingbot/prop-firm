@@ -1,4 +1,4 @@
-# Place this file in /api.yourdomain.com/ and rename to .htaccess
+# Place this file in /api.couponen.com/ and rename to .htaccess
 # It proxies all requests to the Express server running on port 3001
 
 RewriteEngine On

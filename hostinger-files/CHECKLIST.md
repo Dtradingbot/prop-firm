@@ -31,26 +31,26 @@
        hPanel → Databases → MySQL Databases → Create
        → Note down: DB name, username, password
 
-[ ] 6. Create subdomain: api.yourdomain.com
+[ ] 6. Create subdomain: api.couponen.com
        hPanel → Domains → Subdomains → Create
 
 [ ] 7. Create Node.js App (BACKEND)
        hPanel → Advanced → Node.js → Create Application
-       - Root: api.yourdomain.com
+       - Root: api.couponen.com
        - Startup file: dist/index.js
-       - URL: api.yourdomain.com
+       - URL: api.couponen.com
        - Port: 3001
 
 [ ] 8. Create Node.js App (FRONTEND)
        hPanel → Advanced → Node.js → Create Application
        - Root: public_html
        - Startup file: .next/standalone/server.js
-       - URL: yourdomain.com
+       - URL: couponen.com
        - Port: 3000
 
 ## UPLOAD FILES (FileZilla or File Manager)
 
-[ ] 9. Upload BACKEND to /api.yourdomain.com/
+[ ] 9. Upload BACKEND to /api.couponen.com/
        Upload these from your backend/ folder:
        ✓ dist/           (the compiled code)
        ✓ prisma/         (schema + seed)
@@ -67,7 +67,7 @@
 
 ## CREATE CONFIG FILES
 
-[ ] 11. Create .env in /api.yourdomain.com/
+[ ] 11. Create .env in /api.couponen.com/
         Use template: hostinger-files/backend-.env-template
         Fill in YOUR MySQL credentials and JWT_SECRET
         Rename file to just: .env
@@ -79,15 +79,15 @@
 
 [ ] 13. Upload .htaccess files
         → frontend-.htaccess → rename to .htaccess → upload to /public_html/
-        → backend-.htaccess  → rename to .htaccess → upload to /api.yourdomain.com/
+        → backend-.htaccess  → rename to .htaccess → upload to /api.couponen.com/
 
 ## VIA SSH
 
 [ ] 14. SSH into your server:
-        ssh u123456789@yourdomain.com
+        ssh u123456789@couponen.com
 
 [ ] 15. Install backend packages:
-        cd ~/api.yourdomain.com
+        cd ~/api.couponen.com
         npm install --omit=dev
 
 [ ] 16. Setup database:
@@ -96,25 +96,25 @@
         npx tsx prisma/seed.ts
 
 [ ] 17. Create uploads folder:
-        mkdir -p ~/api.yourdomain.com/uploads
-        chmod 755 ~/api.yourdomain.com/uploads
+        mkdir -p ~/api.couponen.com/uploads
+        chmod 755 ~/api.couponen.com/uploads
 
 ## FINAL STEPS IN hPANEL
 
 [ ] 18. Install SSL
         hPanel → Security → SSL/TLS
-        Install for: yourdomain.com AND api.yourdomain.com
+        Install for: couponen.com AND api.couponen.com
 
 [ ] 19. Start both apps
         hPanel → Advanced → Node.js
-        → Click RESTART on backend app (api.yourdomain.com)
-        → Click RESTART on frontend app (yourdomain.com)
+        → Click RESTART on backend app (api.couponen.com)
+        → Click RESTART on frontend app (couponen.com)
 
 ## TEST
 
-[ ] 20. Open https://yourdomain.com → Homepage shows ✓
-[ ] 21. Open https://api.yourdomain.com/health → {"status":"ok"} ✓
-[ ] 22. Open https://yourdomain.com/admin → Login page shows ✓
+[ ] 20. Open https://couponen.com → Homepage shows ✓
+[ ] 21. Open https://api.couponen.com/health → {"status":"ok"} ✓
+[ ] 22. Open https://couponen.com/admin → Login page shows ✓
 [ ] 23. Login: admin@propfirmhub.com / admin123! → Dashboard shows ✓
 [ ] 24. Change admin password! ← IMPORTANT
 

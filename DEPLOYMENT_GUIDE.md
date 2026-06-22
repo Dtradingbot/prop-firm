@@ -155,7 +155,7 @@ Fill in your `.env`:
 DATABASE_URL="postgresql://propfirmhub:YOUR_STRONG_PASSWORD_HERE@localhost:5432/propfirmhub"
 JWT_SECRET="replace-this-with-a-64-character-random-string"
 PORT=5000
-FRONTEND_URL="https://yourdomain.com"
+FRONTEND_URL="https://couponen.com"
 NODE_ENV="production"
 
 # Optional: Email settings
@@ -225,8 +225,8 @@ nano .env.local
 
 Fill in `.env.local`:
 ```env
-NEXT_PUBLIC_API_URL=https://yourdomain.com/api
-NEXT_PUBLIC_SITE_URL=https://yourdomain.com
+NEXT_PUBLIC_API_URL=https://couponen.com/api
+NEXT_PUBLIC_SITE_URL=https://couponen.com
 ```
 
 **Add Next.js standalone output** (edit `next.config.ts`):
@@ -271,7 +271,7 @@ sudo systemctl enable nginx
 sudo nano /etc/nginx/sites-available/propfirmhub
 ```
 
-Paste this configuration (replace `yourdomain.com`):
+Paste this configuration (replace `couponen.com`):
 
 ```nginx
 # Rate limiting
@@ -279,7 +279,7 @@ limit_req_zone $binary_remote_addr zone=api:10m rate=30r/m;
 
 server {
     listen 80;
-    server_name yourdomain.com www.yourdomain.com;
+    server_name couponen.com www.couponen.com;
 
     # Logs
     access_log /var/log/nginx/propfirmhub.access.log;
@@ -360,7 +360,7 @@ sudo systemctl reload nginx
 sudo apt install -y certbot python3-certbot-nginx
 
 # Get SSL certificate (replace with your domain)
-sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+sudo certbot --nginx -d couponen.com -d www.couponen.com
 
 # Follow prompts:
 # - Enter your email
@@ -484,12 +484,12 @@ Open your browser and check:
 
 | URL | Expected |
 |-----|---------|
-| `https://yourdomain.com` | Homepage loads |
-| `https://yourdomain.com/firms` | Firm directory |
-| `https://yourdomain.com/admin` | Redirects to login |
-| `https://yourdomain.com/api/health` | `{"status":"ok"}` |
-| `https://yourdomain.com/go/ftmo` | Redirects to FTMO |
-| `https://yourdomain.com/sitemap.xml` | XML sitemap |
+| `https://couponen.com` | Homepage loads |
+| `https://couponen.com/firms` | Firm directory |
+| `https://couponen.com/admin` | Redirects to login |
+| `https://couponen.com/api/health` | `{"status":"ok"}` |
+| `https://couponen.com/go/ftmo` | Redirects to FTMO |
+| `https://couponen.com/sitemap.xml` | XML sitemap |
 
 ---
 
@@ -680,4 +680,4 @@ crontab -e
 | Super Admin | admin@propfirmhub.com | admin123! |
 | Editor | editor@propfirmhub.com | editor123! |
 
-Login at: `https://yourdomain.com/admin`
+Login at: `https://couponen.com/admin`

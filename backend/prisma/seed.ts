@@ -9,10 +9,10 @@ async function main() {
   // Super admin
   const adminHash = await bcrypt.hash('admin123!', 12);
   await prisma.user.upsert({
-    where: { email: 'admin@propfirmhub.com' },
+    where: { email: 'admin@couponen.com' },
     update: {},
     create: {
-      email: 'admin@propfirmhub.com',
+      email: 'admin@couponen.com',
       username: 'superadmin',
       passwordHash: adminHash,
       role: 'SUPER_ADMIN',
@@ -23,10 +23,10 @@ async function main() {
   // Demo editor
   const editorHash = await bcrypt.hash('editor123!', 12);
   await prisma.user.upsert({
-    where: { email: 'editor@propfirmhub.com' },
+    where: { email: 'editor@couponen.com' },
     update: {},
     create: {
-      email: 'editor@propfirmhub.com',
+      email: 'editor@couponen.com',
       username: 'editor',
       passwordHash: editorHash,
       role: 'EDITOR',
@@ -200,7 +200,7 @@ async function main() {
   // CMS Pages
   const pages = [
     { title: 'About Us', slug: 'about', body: '# About PropFirmHub\n\nPropFirmHub is the leading independent comparison platform for proprietary trading firms. We help traders find the best prop firms with the most transparent information.' },
-    { title: 'Contact', slug: 'contact', body: '# Contact Us\n\nEmail: contact@propfirmhub.com\n\nWe aim to respond within 24 hours.' },
+    { title: 'Contact', slug: 'contact', body: '# Contact Us\n\nEmail: contact@couponen.com\n\nWe aim to respond within 24 hours.' },
     { title: 'Privacy Policy', slug: 'privacy-policy', body: '# Privacy Policy\n\nYour privacy is important to us...' },
     { title: 'Terms of Service', slug: 'terms', body: '# Terms of Service\n\nBy using PropFirmHub, you agree to these terms...' },
     { title: 'Disclaimer', slug: 'disclaimer', body: '# Disclaimer\n\nTrading involves significant risk. PropFirmHub may earn affiliate commissions from links on this site.' },
@@ -232,7 +232,7 @@ async function main() {
   const defaultSettings = [
     { key: 'site_name', value: 'PropFirmHub' },
     { key: 'site_description', value: 'The #1 Prop Firm Comparison Platform' },
-    { key: 'contact_email', value: 'contact@propfirmhub.com' },
+    { key: 'contact_email', value: 'contact@couponen.com' },
     { key: 'meta_title', value: 'PropFirmHub — Compare Prop Firms' },
     { key: 'meta_description', value: 'Compare 100+ prop trading firms. Find the best funding and profit splits.' },
   ];
@@ -241,8 +241,8 @@ async function main() {
   }
 
   console.log('✅ Database seeded successfully!');
-  console.log('Admin login: admin@propfirmhub.com / admin123!');
-  console.log('Editor login: editor@propfirmhub.com / editor123!');
+  console.log('Admin login: admin@couponen.com / admin123!');
+  console.log('Editor login: editor@couponen.com / editor123!');
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect());

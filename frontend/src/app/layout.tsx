@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://propfirmhub.com',
+    url: 'https://couponen.com',
     siteName: 'PropFirmHub',
   },
   twitter: {

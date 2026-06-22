@@ -8,10 +8,10 @@ Hostinger uses **MySQL** and supports **Node.js** apps via hPanel.
 ## Overview — How It Works on Hostinger
 
 ```
-yourdomain.com          → Next.js frontend  (Node.js App #1, port 3000)
-api.yourdomain.com      → Express backend   (Node.js App #2, port 3001)
+couponen.com          → Next.js frontend  (Node.js App #1, port 3000)
+api.couponen.com      → Express backend   (Node.js App #2, port 3001)
 MySQL database          → From hPanel → Databases → MySQL Databases
-Uploads folder          → /public_html/api.yourdomain.com/uploads/
+Uploads folder          → /public_html/api.couponen.com/uploads/
 ```
 
 You will create **2 Node.js applications** in hPanel, one for each subdomain.
@@ -89,7 +89,7 @@ You will upload the `.next/standalone/` folder.
 You need **2 subdomains** for the two Node.js apps.
 
 1. hPanel → **Domains** → **Subdomains**
-2. Create subdomain: `api` → points to `/public_html/api.yourdomain.com`
+2. Create subdomain: `api` → points to `/public_html/api.couponen.com`
 3. That's it — the frontend lives on the main domain
 
 ---
@@ -101,11 +101,11 @@ You need **2 subdomains** for the two Node.js apps.
 3. Fill in:
    - **Node.js version**: `20.x` (or highest available)
    - **Application mode**: `Production`
-   - **Application root**: `api.yourdomain.com` ← this is the folder name
-   - **Application URL**: `api.yourdomain.com`
+   - **Application root**: `api.couponen.com` ← this is the folder name
+   - **Application URL**: `api.couponen.com`
    - **Application startup file**: `dist/index.js`
 4. Click **Create**
-5. Note the **application path** shown (e.g. `/home/u123456789/api.yourdomain.com`)
+5. Note the **application path** shown (e.g. `/home/u123456789/api.couponen.com`)
 
 ---
 
@@ -117,7 +117,7 @@ You need **2 subdomains** for the two Node.js apps.
    - **Node.js version**: `20.x`
    - **Application mode**: `Production`
    - **Application root**: `public_html` (main domain root)
-   - **Application URL**: `yourdomain.com`
+   - **Application URL**: `couponen.com`
    - **Application startup file**: `.next/standalone/server.js`
 4. Click **Create**
 
@@ -133,7 +133,7 @@ You need **2 subdomains** for the two Node.js apps.
 2. Navigate to your home directory
 
 **Upload Backend files:**
-- Open `/api.yourdomain.com/` folder
+- Open `/api.couponen.com/` folder
 - Upload these files/folders from your `backend/` folder:
   ```
   dist/           ← compiled backend code
@@ -172,14 +172,14 @@ You need **2 subdomains** for the two Node.js apps.
 
 ### Step 8 — Create Backend `.env` on Server
 
-In **File Manager**, inside `/api.yourdomain.com/`, create a new file called `.env`:
+In **File Manager**, inside `/api.couponen.com/`, create a new file called `.env`:
 
 ```
 DATABASE_URL="mysql://u123456789_propfirm:YourPassword@127.0.0.1:3306/u123456789_propfirm"
 JWT_SECRET="paste-your-64-char-random-string-here"
 PORT=3001
 NODE_ENV="production"
-FRONTEND_URL="https://yourdomain.com"
+FRONTEND_URL="https://couponen.com"
 ```
 
 **To generate JWT_SECRET on your PC (Git Bash):**
@@ -195,8 +195,8 @@ Copy the output and paste it as the JWT_SECRET value.
 In **File Manager**, inside `/public_html/`, create a new file called `.env.local`:
 
 ```
-NEXT_PUBLIC_API_URL=https://api.yourdomain.com/api
-NEXT_PUBLIC_SITE_URL=https://yourdomain.com
+NEXT_PUBLIC_API_URL=https://api.couponen.com/api
+NEXT_PUBLIC_SITE_URL=https://couponen.com
 PORT=3000
 HOSTNAME=0.0.0.0
 ```
@@ -213,7 +213,7 @@ HOSTNAME=0.0.0.0
 
 **Open Git Bash on your PC:**
 ```bash
-ssh u123456789@yourdomain.com
+ssh u123456789@couponen.com
 # Enter your password when asked
 ```
 
@@ -223,7 +223,7 @@ ssh u123456789@yourdomain.com
 
 ```bash
 # Navigate to backend folder
-cd ~/api.yourdomain.com
+cd ~/api.couponen.com
 
 # Install production dependencies only
 npm install --omit=dev
@@ -234,8 +234,8 @@ npm install --omit=dev
 ### Step 12 — Run Database Migration
 
 ```bash
-# Still in ~/api.yourdomain.com
-cd ~/api.yourdomain.com
+# Still in ~/api.couponen.com
+cd ~/api.couponen.com
 
 # Generate Prisma client
 npx prisma generate
@@ -258,8 +258,8 @@ Admin login: admin@propfirmhub.com / admin123!
 ### Step 13 — Create Uploads Folder
 
 ```bash
-mkdir -p ~/api.yourdomain.com/uploads
-chmod 755 ~/api.yourdomain.com/uploads
+mkdir -p ~/api.couponen.com/uploads
+chmod 755 ~/api.couponen.com/uploads
 ```
 
 ---
@@ -269,8 +269,8 @@ chmod 755 ~/api.yourdomain.com/uploads
 ### Step 14 — Start Both Node.js Apps
 
 1. hPanel → **Advanced** → **Node.js**
-2. Find **api.yourdomain.com** app → click **Restart** (or Start)
-3. Find **yourdomain.com** app → click **Restart** (or Start)
+2. Find **api.couponen.com** app → click **Restart** (or Start)
+3. Find **couponen.com** app → click **Restart** (or Start)
 
 Both should show status: **Running** ✓
 
@@ -278,7 +278,7 @@ Both should show status: **Running** ✓
 
 ### Step 15 — Configure .htaccess for Backend Subdomain
 
-In **File Manager**, go to `/api.yourdomain.com/` and create `.htaccess`:
+In **File Manager**, go to `/api.couponen.com/` and create `.htaccess`:
 
 ```apache
 RewriteEngine On
@@ -302,17 +302,17 @@ Open your browser and check:
 
 | URL | Expected Result |
 |-----|----------------|
-| `https://yourdomain.com` | PropFirmHub homepage |
-| `https://yourdomain.com/firms` | Firm directory |
-| `https://yourdomain.com/admin` | Admin login page |
-| `https://api.yourdomain.com/health` | `{"status":"ok"}` |
-| `https://api.yourdomain.com/api/firms` | JSON list of firms |
-| `https://yourdomain.com/go/ftmo` | Redirects to FTMO |
-| `https://yourdomain.com/sitemap.xml` | XML sitemap |
+| `https://couponen.com` | PropFirmHub homepage |
+| `https://couponen.com/firms` | Firm directory |
+| `https://couponen.com/admin` | Admin login page |
+| `https://api.couponen.com/health` | `{"status":"ok"}` |
+| `https://api.couponen.com/api/firms` | JSON list of firms |
+| `https://couponen.com/go/ftmo` | Redirects to FTMO |
+| `https://couponen.com/sitemap.xml` | XML sitemap |
 
 ### Login to Admin Panel
 
-URL: `https://yourdomain.com/admin`
+URL: `https://couponen.com/admin`
 
 | Role | Email | Password |
 |------|-------|----------|
@@ -328,8 +328,8 @@ URL: `https://yourdomain.com/admin`
 Hostinger provides **free SSL** for all domains.
 
 1. hPanel → **Security** → **SSL/TLS**
-2. Find `yourdomain.com` → click **Install**
-3. Find `api.yourdomain.com` → click **Install**
+2. Find `couponen.com` → click **Install**
+3. Find `api.couponen.com` → click **Install**
 4. Wait 5-10 minutes for SSL to activate
 
 ---
@@ -338,7 +338,7 @@ Hostinger provides **free SSL** for all domains.
 
 ### Add Prop Firms
 
-1. Login to `https://yourdomain.com/admin`
+1. Login to `https://couponen.com/admin`
 2. Go to **Prop Firms** → **Add Firm**
 3. For each firm fill in:
    - Name, Logo, Description
@@ -350,7 +350,7 @@ Hostinger provides **free SSL** for all domains.
 ### How Affiliate Links Work
 
 When a visitor clicks **"Visit Website"** on any firm:
-1. They go to `yourdomain.com/go/firm-slug`
+1. They go to `couponen.com/go/firm-slug`
 2. Server logs the click (device, source, country)
 3. Server redirects to your affiliate URL
 4. You earn commission
@@ -372,7 +372,7 @@ You can change the affiliate URL anytime from admin — **no code changes needed
 
 ```bash
 # SSH in and check logs
-cd ~/api.yourdomain.com
+cd ~/api.couponen.com
 cat logs/error.log
 
 # Or check if .env is correct
@@ -406,7 +406,7 @@ ls -la .next/standalone/
 
 ```bash
 # SSH in
-chmod -R 755 ~/api.yourdomain.com/uploads/
+chmod -R 755 ~/api.couponen.com/uploads/
 ```
 
 ### Node.js app won't start — wrong startup file
@@ -449,7 +449,7 @@ cp -r .next/static .next/standalone/.next/static
 
 ```
 /home/u123456789/
-├── api.yourdomain.com/        ← BACKEND
+├── api.couponen.com/        ← BACKEND
 │   ├── dist/                  ← compiled Express.js
 │   ├── node_modules/
 │   ├── prisma/

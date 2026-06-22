@@ -279,7 +279,7 @@ Follow the full [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed steps.
 1. **Google Search Console**
    - Add your site at `search.google.com/search-console`
    - Verify ownership via DNS TXT record
-   - Submit sitemap: `https://yourdomain.com/sitemap.xml`
+   - Submit sitemap: `https://couponen.com/sitemap.xml`
 
 2. **Google Analytics** (optional)
    - Create GA4 property
@@ -292,7 +292,7 @@ Follow the full [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed steps.
 ### 7.3 Affiliate Tracking Test
 
 Test your affiliate links work:
-1. Visit `https://yourdomain.com/go/ftmo`
+1. Visit `https://couponen.com/go/ftmo`
 2. Should redirect to FTMO affiliate URL
 3. Check admin analytics shows the click
 
