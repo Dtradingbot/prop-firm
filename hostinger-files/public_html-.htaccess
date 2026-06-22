@@ -1,0 +1,9 @@
+# Place this in /public_html/ as .htaccess
+# Routes all traffic through the combined Node.js server on port 3001
+
+RewriteEngine On
+RewriteRule ^(.*)$ http://localhost:3001/$1 [P,L]
+
+# Security
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"

@@ -1,121 +1,137 @@
-# PropFirmHub — Hostinger Upload Checklist
-# Follow this step by step. Tick each box as you finish it.
+# PropFirmHub — Hostinger Upload Checklist (Single Domain)
+# Domain: couponen.com
+# Everything runs on ONE domain, ONE Node.js app
 
-## ON YOUR PC FIRST
+## ✅ ALREADY DONE
+[x] MySQL Database created: u886546027_propfirm
+[x] GitHub repo pushed: github.com/Dtradingbot/prop-firm
 
-[ ] 1. Open Git Bash → go to backend folder:
-       cd "C:\Users\Welcome\Desktop\popframj\propfirmhub\backend"
-       npm install
-       npm run build
-       → Creates: backend/dist/ folder ✓
+## STEP 1 — BUILD ON YOUR PC
 
-[ ] 2. Open Git Bash → go to frontend folder:
-       cd "C:\Users\Welcome\Desktop\popframj\propfirmhub\frontend"
-       npm install
-       npm run build
-       → Creates: frontend/.next/standalone/ folder ✓
+[ ] Open Git Bash on your PC:
 
-[ ] 3. Copy static files into standalone (Git Bash):
-       cd "C:\Users\Welcome\Desktop\popframj\propfirmhub\frontend"
-       cp -r public .next/standalone/public
-       cp -r .next/static .next/standalone/.next/static
-       ✓
+    cd "C:\Users\Welcome\Desktop\popframj\propfirmhub"
 
-[ ] 4. Generate JWT Secret (Git Bash):
-       node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-       → COPY AND SAVE THIS STRING
+    # Install root dependencies
+    npm install
 
-## IN HOSTINGER hPANEL
+    # Build backend
+    cd backend
+    npm install
+    npm run build
 
-[ ] 5. Create MySQL Database
-       hPanel → Databases → MySQL Databases → Create
-       → Note down: DB name, username, password
+    # Build frontend
+    cd ../frontend
+    npm install
+    npm run build
 
-[ ] 6. Create subdomain: api.couponen.com
-       hPanel → Domains → Subdomains → Create
+    # Copy static files into standalone
+    cp -r public .next/standalone/public
+    cp -r .next/static .next/standalone/.next/static
 
-[ ] 7. Create Node.js App (BACKEND)
-       hPanel → Advanced → Node.js → Create Application
-       - Root: api.couponen.com
-       - Startup file: dist/index.js
-       - URL: api.couponen.com
-       - Port: 3001
+## STEP 2 — CREATE NODE.JS APP IN HOSTINGER
 
-[ ] 8. Create Node.js App (FRONTEND)
-       hPanel → Advanced → Node.js → Create Application
-       - Root: public_html
-       - Startup file: .next/standalone/server.js
-       - URL: couponen.com
-       - Port: 3000
+[ ] hPanel → Advanced → Node.js → Create Application:
 
-## UPLOAD FILES (FileZilla or File Manager)
+    Node.js version:   20.x  (or highest)
+    Application mode:  Production
+    Application root:  public_html
+    Application URL:   couponen.com
+    Startup file:      server.js
 
-[ ] 9. Upload BACKEND to /api.couponen.com/
-       Upload these from your backend/ folder:
-       ✓ dist/           (the compiled code)
-       ✓ prisma/         (schema + seed)
-       ✓ package.json
-       (skip node_modules — will install via SSH)
+## STEP 3 — UPLOAD FILES via FileZilla or File Manager
 
-[ ] 10. Upload FRONTEND to /public_html/
-        Upload everything from frontend/.next/standalone/:
-        ✓ server.js
-        ✓ package.json
-        ✓ .next/          (from .next/standalone/.next/)
-        ✓ public/         (from .next/standalone/public/)
-        ✓ node_modules/   (from .next/standalone/node_modules/)
+Upload ALL of these to /public_html/ on Hostinger:
 
-## CREATE CONFIG FILES
+FROM: C:\Users\Welcome\Desktop\popframj\propfirmhub\
 
-[ ] 11. Create .env in /api.couponen.com/
-        Use template: hostinger-files/backend-.env-template
-        Fill in YOUR MySQL credentials and JWT_SECRET
-        Rename file to just: .env
+[ ] server.js                         ← combined server entry point
+[ ] package.json                      ← root package.json
+[ ] node_modules/                     ← from root (after npm install)
+[ ] backend/
+    └── dist/                         ← built backend code
+    └── prisma/                       ← schema + seed
+    └── package.json
+    └── node_modules/                 ← backend dependencies
+[ ] frontend/
+    └── .next/
+        └── standalone/               ← built Next.js
+    └── public/
+[ ] .env                              ← rename backend-.env-READY to .env
+[ ] uploads/                          ← empty folder (create it)
 
-[ ] 12. Create .env.local in /public_html/
-        Use template: hostinger-files/frontend-.env.local-template
-        Fill in YOUR domain name
-        Rename file to just: .env.local
+## STEP 4 — CREATE .env FILE
 
-[ ] 13. Upload .htaccess files
-        → frontend-.htaccess → rename to .htaccess → upload to /public_html/
-        → backend-.htaccess  → rename to .htaccess → upload to /api.couponen.com/
+[ ] Take file: hostinger-files/backend-.env-READY
+[ ] Rename it to: .env
+[ ] Upload to: /public_html/
 
-## VIA SSH
+Contents (already filled with your credentials):
+DATABASE_URL="mysql://u886546027_propfirm:2C|2dj!hdma!@127.0.0.1:3306/u886546027_propfirm"
+JWT_SECRET="2494125c17092..."
+PORT=3001
+NODE_ENV="production"
+FRONTEND_URL="https://couponen.com"
 
-[ ] 14. SSH into your server:
-        ssh u123456789@couponen.com
+## STEP 5 — CREATE .env.local FILE
 
-[ ] 15. Install backend packages:
-        cd ~/api.couponen.com
-        npm install --omit=dev
+[ ] Take file: hostinger-files/frontend-.env.local-READY
+[ ] Rename it to: .env.local
+[ ] Upload to: /public_html/frontend/
 
-[ ] 16. Setup database:
-        npx prisma generate
-        npx prisma db push
-        npx tsx prisma/seed.ts
+Contents:
+NEXT_PUBLIC_API_URL=https://couponen.com/api
+NEXT_PUBLIC_SITE_URL=https://couponen.com
 
-[ ] 17. Create uploads folder:
-        mkdir -p ~/api.couponen.com/uploads
-        chmod 755 ~/api.couponen.com/uploads
+## STEP 6 — CREATE .htaccess FILE
 
-## FINAL STEPS IN hPANEL
+[ ] Take file: hostinger-files/public_html-.htaccess
+[ ] Rename it to: .htaccess
+[ ] Upload to: /public_html/
 
-[ ] 18. Install SSL
-        hPanel → Security → SSL/TLS
-        Install for: couponen.com AND api.couponen.com
+## STEP 7 — SSH SETUP (database tables)
 
-[ ] 19. Start both apps
-        hPanel → Advanced → Node.js
-        → Click RESTART on backend app (api.couponen.com)
-        → Click RESTART on frontend app (couponen.com)
+[ ] hPanel → Advanced → SSH Access → Enable SSH
 
-## TEST
+[ ] Open Git Bash on your PC:
+    ssh u886546027@couponen.com
 
-[ ] 20. Open https://couponen.com → Homepage shows ✓
-[ ] 21. Open https://api.couponen.com/health → {"status":"ok"} ✓
-[ ] 22. Open https://couponen.com/admin → Login page shows ✓
-[ ] 23. Login: admin@propfirmhub.com / admin123! → Dashboard shows ✓
-[ ] 24. Change admin password! ← IMPORTANT
+[ ] Run these commands on server:
+    cd ~/public_html
+    cd backend
+    npx prisma generate
+    npx prisma db push
+    npx tsx prisma/seed.ts
 
-## DONE! 🎉 Start adding your prop firms in the admin panel.
+[ ] Create uploads folder:
+    mkdir -p ~/public_html/uploads
+    chmod 755 ~/public_html/uploads
+
+## STEP 8 — START APP
+
+[ ] hPanel → Advanced → Node.js
+[ ] Find couponen.com app → click RESTART
+
+## STEP 9 — INSTALL SSL
+
+[ ] hPanel → Security → SSL/TLS
+[ ] Install SSL for: couponen.com
+[ ] Install SSL for: www.couponen.com
+
+## TEST THESE URLS
+
+[ ] https://couponen.com              → Homepage ✓
+[ ] https://couponen.com/firms        → Firm list ✓
+[ ] https://couponen.com/admin        → Admin login ✓
+[ ] https://couponen.com/api/health   → {"status":"ok"} ✓
+[ ] https://couponen.com/go/ftmo      → Redirects to FTMO ✓
+
+## LOGIN TO ADMIN PANEL
+
+URL:      https://couponen.com/admin
+Email:    admin@couponen.com
+Password: admin123!
+
+⚠️  CHANGE THIS PASSWORD AFTER FIRST LOGIN!
+
+## DONE! Start adding prop firms at couponen.com/admin
