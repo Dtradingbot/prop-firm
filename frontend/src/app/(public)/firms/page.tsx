@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { firmApi } from '@/lib/api';
 import { FirmCard } from '@/components/firms/FirmCard';
@@ -8,7 +8,7 @@ import { SlidersHorizontal, Grid, List } from 'lucide-react';
 import { PropFirm } from '@/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function FirmsPage() {
+function FirmsPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -162,5 +162,13 @@ export default function FirmsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function FirmsPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-8">Loading...</div>}>
+      <FirmsPageInner />
+    </Suspense>
   );
 }

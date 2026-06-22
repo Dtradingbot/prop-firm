@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { compareApi, firmApi } from '@/lib/api';
@@ -25,7 +25,7 @@ const compareFields = [
   { key: 'trustScore', label: 'Trust Score', format: (v: any) => v ? `${v}/100` : '—' },
 ];
 
-export default function ComparePage() {
+function ComparePageInner() {
   const searchParams = useSearchParams();
   const firmSlugs = searchParams.get('firms')?.split(',').filter(Boolean) || [];
   const [slugs, setSlugs] = useState<string[]>(firmSlugs);
@@ -177,5 +177,13 @@ export default function ComparePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ComparePage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-8">Loading...</div>}>
+      <ComparePageInner />
+    </Suspense>
   );
 }
